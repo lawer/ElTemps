@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.example.poblenou.eltemps.json.Forecast;
 import com.example.poblenou.eltemps.json.List;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -114,11 +115,15 @@ public class WeatherFragment extends Fragment {
                 Forecast forecast = response.body();
                 for (List list : forecast.getList()) {
                     Long dt = list.getDt();
-                    String description = list.getWeather().get(0).getDescription();
-                    Double min = list.getTemp().getMin();
-                    Double max = list.getTemp().getMax();
+                    java.util.Date date = new java.util.Date(dt * 1000);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("E d/M");
+                    String dateString = dateFormat.format(date);
 
-                    Log.w("list", String.format("%s - %s - %s/%s", dt, description, min, max));
+                    String description = list.getWeather().get(0).getDescription();
+                    Long min = Math.round(list.getTemp().getMin());
+                    Long max = Math.round(list.getTemp().getMax());
+
+                    Log.w("list", String.format("%s - %s - %s/%s", dateString, description, min, max));
                 }
 
             }
