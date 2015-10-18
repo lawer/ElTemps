@@ -1,5 +1,6 @@
 package com.example.poblenou.eltemps;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -44,7 +45,7 @@ public class OwmApiClient {
         service = retrofit.create(OpenWeatherMapService.class);
     }
 
-    public void updateForecasts(final ArrayAdapter<String> adapter) {
+    public void updateForecasts(final ArrayAdapter<String> adapter, final SwipeRefreshLayout refreshLayout) {
         Call<Forecast> forecastCall = service.dailyForecast(
                 CITY, "json", "metric", 14, APPID
         );
@@ -61,6 +62,7 @@ public class OwmApiClient {
 
                 adapter.clear();
                 adapter.addAll(forecastStrings);
+                refreshLayout.setRefreshing(false);
             }
 
             @Override
