@@ -2,6 +2,7 @@ package com.example.poblenou.eltemps;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,7 @@ public class WeatherFragment extends Fragment {
 
     private ArrayList<String> items;
     private ArrayAdapter<String> adapter;
+    private SwipeRefreshLayout refreshLayout;
 
     public WeatherFragment() {
     }
@@ -57,6 +59,13 @@ public class WeatherFragment extends Fragment {
 
         ListView lvForecast = (ListView) rootView.findViewById(R.id.lvForecasts);
         lvForecast.setAdapter(adapter);
+        refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.srlRefresh);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
 
         return rootView;
     }
@@ -89,7 +98,8 @@ public class WeatherFragment extends Fragment {
     }
 
     private void refresh() {
+        refreshLayout.setRefreshing(true);
         OwmApiClient apiClient = new OwmApiClient();
-        apiClient.updateForecasts(adapter);
+        apiClient.updateForecasts(adapter, refreshLayout);
     }
 }
