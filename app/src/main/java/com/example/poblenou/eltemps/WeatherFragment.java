@@ -1,6 +1,8 @@
 package com.example.poblenou.eltemps;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -95,6 +97,10 @@ public class WeatherFragment extends Fragment {
     private void refresh() {
         refreshLayout.setRefreshing(true);
         OwmApiClient apiClient = new OwmApiClient();
-        apiClient.updateForecasts(adapter, refreshLayout);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String location = preferences.getString("location", "Barcelona");
+        String units = preferences.getString("units", "Metric");
+        apiClient.updateForecasts(location, units, adapter, refreshLayout);
     }
 }

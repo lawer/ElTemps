@@ -45,9 +45,13 @@ public class OwmApiClient {
         service = retrofit.create(OpenWeatherMapService.class);
     }
 
-    public void updateForecasts(final ArrayAdapter<String> adapter, final SwipeRefreshLayout refreshLayout) {
+    public void updateForecasts(String location,
+                                String units,
+                                final ArrayAdapter<String> adapter,
+                                final SwipeRefreshLayout refreshLayout) {
+
         Call<Forecast> forecastCall = service.dailyForecast(
-                CITY, "json", "metric", 14, APPID
+                location, "json", units, 14, APPID
         );
         forecastCall.enqueue(new Callback<Forecast>() {
             @Override
