@@ -2,7 +2,6 @@ package com.example.poblenou.eltemps;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,20 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.poblenou.eltemps.json.Forecast;
-import com.example.poblenou.eltemps.json.List;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.http.GET;
-import retrofit.http.Query;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -102,62 +89,7 @@ public class WeatherFragment extends Fragment {
     }
 
     private void refresh() {
-        final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/";
-        final String CITY = "Barcelona";
-        final String APPID = "bd82977b86bf27fb59a04b61b657fb6f";
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(FORECAST_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        OpenWeatherMapService service = retrofit.create(OpenWeatherMapService.class);
-
-        Call<Forecast> forecastCall = service.dailyForecast(
-                CITY, "json", "metric", 14, APPID
-        );
-        forecastCall.enqueue(new Callback<Forecast>() {
-            @Override
-            public void onResponse(Response<Forecast> response, Retrofit retrofit) {
-                Forecast forecast = response.body();
-
-                ArrayList<String> forecastStrings = new ArrayList<>();
-                for (List list : forecast.getList()) {
-                    Long dt = list.getDt();
-                    java.util.Date date = new java.util.Date(dt * 1000);
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("E d/M");
-                    String dateString = dateFormat.format(date);
-
-                    String description = list.getWeather().get(0).getDescription();
-
-                    Long min = Math.round(list.getTemp().getMin());
-                    Long max = Math.round(list.getTemp().getMax());
-
-                    String forecastString = String.format("%s - %s - %s/%s",
-                            dateString, description, min, max
-                    );
-                    forecastStrings.add(forecastString);
-                }
-
-                adapter.clear();
-                adapter.addAll(forecastStrings);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.w(null, Arrays.toString(t.getStackTrace()));
-            }
-        });
+        OwmApiClient apiClient = new OwmApiClient();
+        apiClient.updateForecasts(adapter);
     }
-
-    public interface OpenWeatherMapService {
-        @GET("forecast/daily")
-        Call<Forecast> dailyForecast(
-                @Query("q") String city,
-                @Query("mode") String format,
-                @Query("units") String units,
-                @Query("cnt") Integer num,
-                @Query("appid") String appid);
-    }
-
 }
