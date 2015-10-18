@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.poblenou.eltemps.json.Forecast;
+import com.example.poblenou.eltemps.json.List;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,7 +111,16 @@ public class WeatherFragment extends Fragment {
         forecastCall.enqueue(new Callback<Forecast>() {
             @Override
             public void onResponse(Response<Forecast> response, Retrofit retrofit) {
-                Toast.makeText(getContext(), response.body().toString(), Toast.LENGTH_LONG).show();
+                Forecast forecast = response.body();
+                for (List list : forecast.getList()) {
+                    Long dt = list.getDt();
+                    String description = list.getWeather().get(0).getDescription();
+                    Double min = list.getTemp().getMin();
+                    Double max = list.getTemp().getMax();
+
+                    Log.w("list", String.format("%s - %s - %s/%s", dt, description, min, max));
+                }
+
             }
 
             @Override
