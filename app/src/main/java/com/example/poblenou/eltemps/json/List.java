@@ -4,6 +4,7 @@ package com.example.poblenou.eltemps.json;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class List implements Parcelable {
@@ -185,5 +186,22 @@ public class List implements Parcelable {
         dest.writeValue(this.deg);
         dest.writeValue(this.clouds);
         dest.writeValue(this.rain);
+    }
+
+    public String forecastString() {
+        Long dt = this.getDt();
+        java.util.Date date = new java.util.Date(dt * 1000);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("E d/M");
+        String dateString = dateFormat.format(date);
+
+        String description = this.getWeather().get(0).getDescription();
+
+        Long min = Math.round(this.getTemp().getMin());
+        Long max = Math.round(this.getTemp().getMax());
+
+        return String.format("%s - %s - %s/%s",
+                dateString, description, min, max
+        );
+
     }
 }
