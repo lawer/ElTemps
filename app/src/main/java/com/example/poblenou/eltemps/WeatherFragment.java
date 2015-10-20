@@ -1,5 +1,6 @@
 package com.example.poblenou.eltemps;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -59,7 +60,10 @@ public class WeatherFragment extends Fragment {
         lvForecast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                List item = adapter.getItem(position);
+                Intent i = new Intent(getContext(), DetailActivity.class);
+                //No podem agregar l'item a l'intent. No es parcelable
+                //i.putExtra(item);
             }
         });
 
