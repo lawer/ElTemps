@@ -62,8 +62,9 @@ public class WeatherFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 List item = adapter.getItem(position);
                 Intent i = new Intent(getContext(), DetailActivity.class);
-                //No podem agregar l'item a l'intent. No es parcelable
-                //i.putExtra(item);
+
+                i.putExtra("item", item);
+                startActivity(i);
             }
         });
 

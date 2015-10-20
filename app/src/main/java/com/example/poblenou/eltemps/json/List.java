@@ -1,19 +1,47 @@
 
 package com.example.poblenou.eltemps.json;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class List {
+public class List implements Parcelable {
 
+    public static final Parcelable.Creator<List> CREATOR = new Parcelable.Creator<List>() {
+        public List createFromParcel(Parcel source) {
+            return new List(source);
+        }
+
+        public List[] newArray(int size) {
+            return new List[size];
+        }
+    };
     private Long dt;
     private Temp temp;
     private Double pressure;
     private Long humidity;
-    private java.util.List<Weather> weather = new ArrayList<Weather>();
+    private java.util.List<Weather> weather = new ArrayList<>();
     private Double speed;
     private Long deg;
     private Long clouds;
     private Double rain;
+
+    public List() {
+    }
+
+    protected List(Parcel in) {
+        this.dt = (Long) in.readValue(Long.class.getClassLoader());
+        this.temp = in.readParcelable(Temp.class.getClassLoader());
+        this.pressure = (Double) in.readValue(Double.class.getClassLoader());
+        this.humidity = (Long) in.readValue(Long.class.getClassLoader());
+        this.weather = new ArrayList<>();
+        in.readList(this.weather, List.class.getClassLoader());
+        this.speed = (Double) in.readValue(Double.class.getClassLoader());
+        this.deg = (Long) in.readValue(Long.class.getClassLoader());
+        this.clouds = (Long) in.readValue(Long.class.getClassLoader());
+        this.rain = (Double) in.readValue(Double.class.getClassLoader());
+    }
 
     /**
      * @return The dt
@@ -141,4 +169,21 @@ public class List {
         this.rain = rain;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.dt);
+        dest.writeParcelable(this.temp, flags);
+        dest.writeValue(this.pressure);
+        dest.writeValue(this.humidity);
+        dest.writeList(this.weather);
+        dest.writeValue(this.speed);
+        dest.writeValue(this.deg);
+        dest.writeValue(this.clouds);
+        dest.writeValue(this.rain);
+    }
 }

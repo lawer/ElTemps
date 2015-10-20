@@ -1,12 +1,34 @@
 
 package com.example.poblenou.eltemps.json;
 
-public class Weather {
+import android.os.Parcel;
+import android.os.Parcelable;
 
+public class Weather implements Parcelable {
+
+    public static final Parcelable.Creator<Weather> CREATOR = new Parcelable.Creator<Weather>() {
+        public Weather createFromParcel(Parcel source) {
+            return new Weather(source);
+        }
+
+        public Weather[] newArray(int size) {
+            return new Weather[size];
+        }
+    };
     private Long id;
     private String main;
     private String description;
     private String icon;
+
+    public Weather() {
+    }
+
+    protected Weather(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.main = in.readString();
+        this.description = in.readString();
+        this.icon = in.readString();
+    }
 
     /**
      * @return The id
@@ -64,4 +86,16 @@ public class Weather {
         this.icon = icon;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.main);
+        dest.writeString(this.description);
+        dest.writeString(this.icon);
+    }
 }
