@@ -2,13 +2,10 @@ package com.example.poblenou.eltemps;
 
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.example.poblenou.eltemps.json.Forecast;
 import com.example.poblenou.eltemps.json.List;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import retrofit.Call;
@@ -47,7 +44,7 @@ public class OwmApiClient {
 
     public void updateForecasts(String location,
                                 String units,
-                                final ArrayAdapter<String> adapter,
+                                final WeatherArrayAdapter adapter,
                                 final SwipeRefreshLayout refreshLayout) {
 
         Call<Forecast> forecastCall = service.dailyForecast(
@@ -58,14 +55,11 @@ public class OwmApiClient {
             public void onResponse(Response<Forecast> response, Retrofit retrofit) {
                 Forecast forecast = response.body();
 
-                ArrayList<String> forecastStrings = new ArrayList<>();
-                for (List list : forecast.getList()) {
-                    String forecastString = getForecastString(list);
-                    forecastStrings.add(forecastString);
+                adapter.clear();
+                for (List forecastItem : forecast.getList()) {
+                    adapter.add(forecastItem);
                 }
 
-                adapter.clear();
-                adapter.addAll(forecastStrings);
                 refreshLayout.setRefreshing(false);
             }
 
@@ -77,20 +71,5 @@ public class OwmApiClient {
 
     }
 
-    private String getForecastString(List list) {
-        Long dt = list.getDt();
-        java.util.Date date = new java.util.Date(dt * 1000);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("E d/M");
-        String dateString = dateFormat.format(date);
-
-        String description = list.getWeather().get(0).getDescription();
-
-        Long min = Math.round(list.getTemp().getMin());
-        Long max = Math.round(list.getTemp().getMax());
-
-        return String.format("%s - %s - %s/%s",
-                dateString, description, min, max
-        );
-    }
 }
 

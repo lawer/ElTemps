@@ -11,19 +11,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.poblenou.eltemps.json.List;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class WeatherFragment extends Fragment {
 
-    private ArrayList<String> items;
-    private ArrayAdapter<String> adapter;
+    private WeatherArrayAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
 
     public WeatherFragment() {
@@ -47,26 +47,22 @@ public class WeatherFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] data = {
-                "Lun 23/6 - Soleado - 31/17",
-                "Mar 24/6 - Niebla - 21/8",
-                "Mier 25/6 - Nublado - 22/17",
-                "Jue 26/6 - Lluvioso - 18/11",
-                "Vie 27/6 - Niebla - 21/10",
-                "Sab 28/6 - Soleado - 23/18",
-                "Dom 29/6 - Soleado - 20/7"
-        };
-
-        items = new ArrayList<>(Arrays.asList(data));
-        adapter = new ArrayAdapter<>(
+        ArrayList<List> items = new ArrayList<>();
+        adapter = new WeatherArrayAdapter(
                 getContext(),
                 R.layout.listview_forecasts_row,
-                R.id.tvForecast,
                 items
         );
 
         ListView lvForecast = (ListView) rootView.findViewById(R.id.lvForecasts);
         lvForecast.setAdapter(adapter);
+        lvForecast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+
         refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.srlRefresh);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
