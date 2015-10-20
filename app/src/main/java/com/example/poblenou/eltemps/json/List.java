@@ -3,6 +3,7 @@ package com.example.poblenou.eltemps.json;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -188,20 +189,37 @@ public class List implements Parcelable {
         dest.writeValue(this.rain);
     }
 
+    public long getRoundedMinTemp() {
+        return roundedTemp(this.getTemp().getMin());
+    }
+
+    public long getRoundedMaxTemp() {
+        return roundedTemp(this.getTemp().getMax());
+    }
+
+    public long roundedTemp(Double temp) {
+        return Math.round(temp);
+    }
+
     public String forecastString() {
-        Long dt = this.getDt();
-        java.util.Date date = new java.util.Date(dt * 1000);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("E d/M");
-        String dateString = dateFormat.format(date);
+        String dateString = getDateString();
 
         String description = this.getWeather().get(0).getDescription();
 
-        Long min = Math.round(this.getTemp().getMin());
-        Long max = Math.round(this.getTemp().getMax());
+        Long min = getRoundedMinTemp();
+        Long max = getRoundedMaxTemp();
 
         return String.format("%s - %s - %s/%s",
                 dateString, description, min, max
         );
 
+    }
+
+    @NonNull
+    public String getDateString() {
+        Long dt = this.getDt();
+        java.util.Date date = new java.util.Date(dt * 1000);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("E d/M");
+        return dateFormat.format(date);
     }
 }
